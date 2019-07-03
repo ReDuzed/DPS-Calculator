@@ -4,7 +4,7 @@ Useful in instances where the end-user is looking for results based on multiplic
 # Summary
 This is a simple console application with the ability to take input variables and output the results.
 
-# Disclaimer
+# Installation/Compiling
 If whoever looking is not trusting of this particular program, there is a way to compile it manually. Microsoft has included a CS compiler in the .NET Framework 4.0 directory. In this case, it takes a fairly simply .bat or .cmd file to automate compiling it. The file in question is also included. It will take the .cs file and output an .exe file.
 
 To further investigate, the .cs file can be viewed to examine it for anything whoever might be undesirable.
