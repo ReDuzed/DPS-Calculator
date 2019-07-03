@@ -51,11 +51,11 @@ namespace planner
                         "Primary stat:    " + (primaryStat * 100 - 100) + "\n" + 
                         "Crit %:          " + critChance + "\n" + 
                         "Crit damage:     " + critDamage + "\n" + 
-                        "Elemental %:     " + ((Math.Round(elemental, 0) - 1f) * 100f) + "\n" + 
+                        "Elemental %:     " + ((Math.Round(elemental, 2) - 1f) * 100f) + "\n" + 
                         "Skill damage %:  " + (skill * 100f - 100) + "\n" + 
                         "Weapon speed:    " + baseSpeed + "\n" + 
                         "Attack speed %:  " + (attackSpeed * 100f) + "\n" + 
-                        "Gear % bonus:    " + (Math.Round(gearDmg, 0) * 100f - 100);
+                        "Gear % bonus:    " + (Math.Round(gearDmg, 2) * 100f - 100);
                 if (allStats)
                     Console.WriteLine(statList);
                 start = false;
@@ -86,7 +86,9 @@ namespace planner
                     case record:
                         Console.WriteLine("Input name of file (perhaps the build name)");
                         w = Console.ReadLine();
-                        using (StreamWriter sw = new StreamWriter(w + ".txt"))
+                        if (!Directory.Exists("builds"));
+                            Directory.CreateDirectory("builds");
+                        using (StreamWriter sw = new StreamWriter("builds\\" + w + ".txt"))
                         {
                             sw.WriteLine(w);
                             sw.WriteLine(Output());
@@ -131,7 +133,8 @@ namespace planner
                         Console.WriteLine("Input elemental damage multiplier.");
                         w = Console.ReadLine();
                         float.TryParse(w, out elemental);
-                        elemental = elemental / 100f + 1;
+                        elemental /= 100f;
+                        elemental += 1f;
                         break;
                     case skillDmg:
                         Console.WriteLine("Input skill damage multiplier.");
@@ -152,7 +155,8 @@ namespace planner
                         Console.WriteLine("Input gear damage multiplier.");
                         w = Console.ReadLine();
                         float.TryParse(w, out gearDmg);
-                        gearDmg /= 100f + 1;
+                        gearDmg /= 100f;
+                        gearDmg += 1f;
                         break;
                     case bonus:
                         Console.WriteLine("Input bonus weapon damage percent.");
@@ -178,11 +182,11 @@ namespace planner
             output += Format(wep, " base damage");
             float speed = baseSpeed * (attackSpeed + 1);
             output += Format (speed, " attacks per second");
-            double product = wep * bonusWep * skill * speed;
-            output += Format (Math.Round(product, 2), " post skill damage");
             double sheet = wep * speed * primaryStat * critProduct;
             output += Format(Math.Round(sheet, 2), " sheet damage");
-            product *= primaryStat * critProduct * gearDmg;
+            double product = sheet * skill;
+            output += Format (Math.Round(product, 0), " post skill damage");
+            product *= gearDmg * elemental * bonusWep;
             output += Format(Math.Round(product, 2), " average damage output per hit", false);
             return output;
         }
