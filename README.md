@@ -12,6 +12,8 @@ To further investigate, the .cs file can be viewed to examine it for anything wh
 
 This is only mentioned with possibility that not all programs are well-intentioned. Also, since it's such a small program, it could lead to questions of its safety.
 
+The only required file is the Program.cs file; the optional file for ease of compiling is the file aptly named compile.cmd.
+
 ## Feedback
 For those looking to find ways for improving it can refer to this place in order to do so:
 https://github.com/ReDuzed/DPS-Calculator/issues
