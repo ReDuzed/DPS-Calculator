@@ -2,7 +2,7 @@
 This is a simple console application with the ability to take input variables and output the results.
 
 ## Screenshots
-These pages display images of the applicationa and output and explain the uncertain functions: 
+These pages display images of the application and output and explain the uncertain functions: 
 https://github.com/ReDuzed/DPS-Calculator/wiki
 
 ## Installation/Compiling
