@@ -10,3 +10,7 @@ If whoever looking is not trusting of this particular program, there is a way to
 To further investigate, the .cs file can be viewed to examine it for anything whoever might be undesirable.
 
 This is only mentioned with possibility that not all programs are well-intentioned. Also, since it's such a small program, it could lead to questions of its safety.
+
+# Feedback
+For those looking to find ways for improving it can refer to this place in order to do so:
+https://github.com/ReDuzed/DPS-Calculator/issues
