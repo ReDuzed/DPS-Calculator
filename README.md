@@ -1,4 +1,4 @@
-# DPS-Calculator
+# Per-Hit Calculator
 This is a simple console application with the ability to take input variables and output the results.
 
 ## Screenshots
