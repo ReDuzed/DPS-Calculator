@@ -24,7 +24,7 @@ namespace planner
         private static int 
             wepAvg = 5, offhandAvg = 0;
         private static float 
-            primaryStat = 1f, elemental = 1f, skill = 1f, critChance = 0.10f, critDamage = 1.50f, baseSpeed = 1, attackSpeed = 0f, bonusDmg = 1, gearDmg = 1f, bonusWep = 1, critProduct = 1.05f;
+            primaryStat = 1f, elemental = 1f, skill = 1f, critChance = 0.10f, critDamage = 1.50f, baseSpeed = 1, attackSpeed = 0f, bonusDmg = 1, gearDmg = 1f, bonusWep = 1, critProduct = 1.15f;
         private const byte
             Low = 0, High = 1, Elemental = 2, SKill = 3, CritChance = 4, CritDamage = 5, BaseSpeed= 6, AttackSpeed = 7, BonusDmg = 8;
         static void Main(string[] args)
@@ -48,14 +48,14 @@ namespace planner
                 string statList = "\n" +
                         "Main hand:       " + wepAvg + "\n" + 
                         "Off-hand:        " + offhandAvg + "\n" + 
-                        "Primary stat:    " + primaryStat * 100 + "\n" + 
+                        "Primary stat:    " + (primaryStat * 100 - 100) + "\n" + 
                         "Crit %:          " + critChance + "\n" + 
                         "Crit damage:     " + critDamage + "\n" + 
                         "Elemental %:     " + ((Math.Round(elemental, 0) - 1f) * 100f) + "\n" + 
-                        "Skill damage %:  " + (skill * 100f) + "\n" + 
+                        "Skill damage %:  " + (skill * 100f - 100) + "\n" + 
                         "Weapon speed:    " + baseSpeed + "\n" + 
                         "Attack speed %:  " + (attackSpeed * 100f) + "\n" + 
-                        "Gear % bonus:    " + (Math.Round(gearDmg, 0) * 100f);
+                        "Gear % bonus:    " + (Math.Round(gearDmg, 0) * 100f - 100);
                 if (allStats)
                     Console.WriteLine(statList);
                 start = false;
