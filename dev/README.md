@@ -4,4 +4,4 @@ This is the place where pre-release builds will be placed. It follows the same m
 ## Features
 ``v0.4 pre-release``
 
-A feature included in this particular build entails ``greater rift completion time estimations``. It hasn't been fully calculated and tested for errors; the ouput provides some statistics like TTK (time to kill) the averaged minio, and the ``health scaling of each GR level``.
+A feature included in this particular build entails ``greater rift completion time estimations``. It hasn't been fully calculated and tested for errors; the ouput provides some statistics like TTK (time to kill) the averaged minion, and the ``health scaling of each GR level``.
