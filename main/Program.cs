@@ -20,7 +20,8 @@ namespace planner
             bonus = "wep%",
             all = "all",
             title = "title",
-            record = "record";
+            record = "record",
+            load = "load";
         private static int 
             wepAvg = 5, offhandAvg = 0;
         private static float 
@@ -29,7 +30,7 @@ namespace planner
             Low = 0, High = 1, Elemental = 2, SKill = 3, CritChance = 4, CritDamage = 5, BaseSpeed= 6, AttackSpeed = 7, BonusDmg = 8;
         static void Main(string[] args)
         {
-            string[] values = new string[] { exit, quit, all, mainhand, offhand, stat, crit, element, skillDmg, atkSpeed, gear, bonus, help, "?" };
+            string[] values = new string[] { exit, quit, all, mainhand, offhand, stat, crit, element, skillDmg, atkSpeed, gear, bonus, help, "?", record, load, title };
             bool start = true;
             bool allStats = false;
             bool cmdList = false;
@@ -37,13 +38,14 @@ namespace planner
             string notice = "";
             string w = "";
             int wep1, wep2;
+            float[] array;
             while (true)
             {
                 Console.Clear();
                 if (notice.Length > 4)
                     Console.WriteLine(notice + "\n");
                 if (cmdList)
-                    Console.Write(string.Format("Commands:{0}{1}{0}{2}{0}{3}{0}{4}{0}{5}{0}{6}{0}{7}{0}{8}{0}{9}{0}{10}{0}{11}{0}{12}{0}{13}{0}{14}{0}{15}{0}{16}{0}\n", new object[] { "\n   ", exit, quit, title, record, help, "?", all, mainhand, offhand, stat, crit, element, skillDmg, atkSpeed, gear, bonus }));
+                    Console.Write(string.Format("Commands:{0}{1}{0}{2}{0}{3}{0}{4}{0}{5}{0}{6}{0}{7}{0}{8}{0}{9}{0}{10}{0}{11}{0}{12}{0}{13}{0}{14}{0}{15}{0}{16}{0}{17}{0}\n", new object[] { "\n   ", exit, quit, title, record, load, help, "?", all, mainhand, offhand, stat, crit, element, skillDmg, atkSpeed, gear, bonus }));
                 Console.WriteLine(Output(start));
                 string statList = "\n" +
                         "Main hand:       " + wepAvg + "\n" + 
@@ -80,19 +82,70 @@ namespace planner
                     case "?":
                         goto case help;
                     case title:
-                        Console.WriteLine("Input title of this window (maybe name of build)");
+                        Console.WriteLine("Input title of this window (maybe name of build).");
                         Console.Title = Console.ReadLine();
                         break;
                     case record:
-                        Console.WriteLine("Input name of file (perhaps the build name)");
+                        Console.WriteLine("Input name of file (perhaps the build name).");
                         w = Console.ReadLine();
                         if (!Directory.Exists("builds"));
                             Directory.CreateDirectory("builds");
-                        using (StreamWriter sw = new StreamWriter("builds\\" + w + ".txt"))
+                        if (!Directory.Exists("saves"));
+                            Directory.CreateDirectory("saves");
+                        StreamWriter sw = new StreamWriter("builds\\" + w + ".txt");
+                        sw.WriteLine(w);
+                        sw.WriteLine(Output());
+                        sw.WriteLine(statList);
+                        sw.Flush();
+                        sw = new StreamWriter("saves\\" + w + ".txt");
+                        array = new float[] 
+                        { 
+                            wepAvg,         offhandAvg,
+                            primaryStat,    elemental,  
+                            skill,          critChance, 
+                            critDamage,     baseSpeed,  
+                            attackSpeed,    bonusDmg,   
+                            gearDmg,        bonusWep 
+                        };
+                        foreach (float f in array)
+                            sw.WriteLine(f + ",");
+                        sw.Flush();
+                        sw.Dispose();
+                        break;
+                    case load:
+                        if (!Directory.Exists("saves"));
+                            Directory.CreateDirectory("saves");
+                        string[] saves = Directory.GetFileSystemEntries("saves");
+                        if (saves.Length == 0)
                         {
-                            sw.WriteLine(w);
-                            sw.WriteLine(Output());
-                            sw.WriteLine(statList);
+                            notice = "Notice: no builds saved";
+                            break;
+                        }
+                        Console.WriteLine("Input name of file to load from (maybe name of build).");
+                        foreach (string c in saves)
+                            Console.WriteLine(c.Substring(c.IndexOf('\\') + 1).Replace(".txt", ""));
+                        w = Console.ReadLine();
+                        string file = "saves\\" + w + ".txt";
+                        if (w.Length < 2 || !File.Exists(file))
+                            continue;
+                        using (StreamReader sr = new StreamReader(file))
+                        {
+                            int index = 0;
+                            array = new float[13];
+                            foreach (string s in sr.ReadToEnd().Split(','))
+                                float.TryParse(s, out array[index++]);
+                            wepAvg = (int)array[0]; 
+                            offhandAvg = (int)array[1];
+                            primaryStat = array[2];
+                            elemental = array[3];
+                            skill = array[4];
+                            critChance = array[5];
+                            critDamage = array[6];
+                            baseSpeed = array[7];
+                            attackSpeed = array[8];
+                            bonusDmg = array[9]; 
+                            gearDmg = array[10]; 
+                            bonusWep = array[11];
                         }
                         break;
                     case mainhand:
