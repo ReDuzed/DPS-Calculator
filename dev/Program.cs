@@ -31,6 +31,10 @@ namespace planner
         private const byte
             Low = 0, High = 1, Elemental = 2, SKill = 3, CritChance = 4, CritDamage = 5, BaseSpeed= 6, AttackSpeed = 7, BonusDmg = 8;
         private static double dmgProduct;
+        ///<summary>
+        ///5 elites, 4 champion packs, 4 mobs
+        ///</summary>
+        private const int foeCount = 22;
         static class GR
         {
             public const float 
@@ -62,18 +66,18 @@ namespace planner
                     Console.Write(string.Format("Commands:{0}{1}{0}{2}{0}{3}{0}{4}{0}{5}{0}{6}{0}{7}{0}{8}{0}{9}{0}{10}{0}{11}{0}{12}{0}{13}{0}{14}{0}{15}{0}{16}{0}{17}{0}{18}{0}{19}{0}\n", new object[] { "\n   ", exit, quit, title, record, load, help, "?", grift, all, mainhand, offhand, stat, crit, element, skillDmg, atkSpeed, gear, bonus, atkRate }));
                 Console.WriteLine(Output(start));
                 string statList = "\n" +
-                        "Main hand:       " + wepAvg + "\n" + 
-                        "Off-hand:        " + offhandAvg + "\n" + 
-                        "Primary stat:    " + (primaryStat * 100 - 100) + "\n" + 
-                        "Crit %:          " + critChance + "\n" + 
-                        "Crit damage:     " + critDamage + "\n" + 
-                        "Elemental %:     " + ((Math.Round(elemental, 2) - 1f) * 100f) + "\n" + 
-                        "Skill damage %:  " + (skill * 100f - 100) + "\n" + 
-                        "Weapon speed:    " + baseSpeed + "\n" + 
-                        "Attack speed %:  " + (attackSpeed * 100f) + "\n" + 
-                        "Gear % bonus:    " + (Math.Round(gearDmg, 2) * 100f - 100) + "\n" +
-                        "Weapon % bonus:  " + (bonusWep * 100f) + "\n" +
-                        "Skill atk. rate: " + hitRate;
+                        "Main hand:         " + wepAvg + "\n" + 
+                        "Off-hand:          " + offhandAvg + "\n" + 
+                        "Primary stat:      " + (primaryStat * 100 - 100) + "\n" + 
+                        "Crit %:            " + critChance + "\n" + 
+                        "Crit damage:       " + critDamage + "\n" + 
+                        "Elemental %:       " + ((Math.Round(elemental, 2) - 1f) * 100f) + "\n" + 
+                        "Skill damage %:    " + (skill * 100f - 100) + "\n" + 
+                        "Weapon speed:      " + baseSpeed + "\n" + 
+                        "Attack speed %:    " + (attackSpeed * 100f) + "\n" + 
+                        "Gear % bonus:      " + (Math.Round(gearDmg, 2) * 100f - 100) + "\n" +
+                        "Weapon % bonus:    " + (bonusWep * 100f) + "\n" +
+                        "Skill atk. rate:   " + hitRate;
                 if (allStats)
                     Console.WriteLine(statList);
                 if (grStats)
@@ -82,13 +86,14 @@ namespace planner
                         white = scale * GR.whiteBaseHP,
                         blue = scale * GR.blueBaseHp,
                         yellow = scale * GR.yellowBaseHP,
-                        average = (white + blue + yellow) / 3d,
-                        ttk = average / dmgProduct,
-                        time = ttk * 40d;
+                        sAverage = (blue + yellow) / 2d,
+                        nTtk = white / dmgProduct,
+                        sTtk = sAverage / dmgProduct,
+                        time = (sTtk * foeCount - 4) + (nTtk * 4);
                     string timeSpan = "";
                     try
                     {
-                        timeSpan += Math.Round(time / 60d, 0);
+                        timeSpan += Math.Round((time / 60d) * 1.08f, 0);
                     }
                     catch
                     {
@@ -98,9 +103,10 @@ namespace planner
                         "Greater rift lvl.: " + tier + "\n" +
                         "Health scale %:    " + (Math.Round(scale, 2) * 100d) + "\n" +
                         "Normal health:     " + Math.Round(white, 0) + "\n" +
+                        "   TTK:            " + (int)nTtk + " seconds\n" +
                         "Champion health:   " + Math.Round(blue, 0) + "\n" + 
                         "Elite health:      " + Math.Round(yellow, 0) + "\n" + 
-                        "TTK average:       " + (int)ttk + " seconds\n" +
+                        "   TTK average:    " + (int)sTtk + " seconds\n" +
                         "Est. clear time:   " + timeSpan + " minutes");
                 }
                 start = false;
@@ -196,6 +202,11 @@ namespace planner
                     case mainhand:
                         Console.WriteLine("Input min and max values for main hand, separated by a dash.");
                         w = Console.ReadLine();
+                        if (!w.Contains("-"))
+                        {
+                            notice = "Notice: range not formatted correctly";
+                            break;
+                        }
                         int.TryParse(w.Substring(0, w.IndexOf('-')), out wep1);
                         int.TryParse(w.Substring(w.IndexOf('-') + 1), out wep2);
                         wepAvg = (wep1 + wep2) / 2;
@@ -205,6 +216,11 @@ namespace planner
                     case offhand:
                         Console.WriteLine("Input min and max values for off hand, separated by a dash.");
                         w = Console.ReadLine();
+                        if (!w.Contains("-"))
+                        {
+                            notice = "Notice: range not formatted correctly";
+                            break;
+                        }
                         int.TryParse(w.Substring(0, w.IndexOf('-')), out wep1);
                         int.TryParse(w.Substring(w.IndexOf('-') + 1), out wep2);
                         offhandAvg = (wep1 + wep2) / 2;
@@ -216,7 +232,7 @@ namespace planner
                         w = Console.ReadLine();
                         if (!float.TryParse(w, out primaryStat))
                             notice = "Notice: primary stat input invalid.";
-                            primaryStat = primaryStat / 100f + 1;
+                        primaryStat = primaryStat / 100f + 1;
                         break;
                     case crit:
                         Console.WriteLine("Input crit chance.");
@@ -225,7 +241,7 @@ namespace planner
                         Console.WriteLine("Input crit damage.");
                         w = Console.ReadLine();
                         float.TryParse(w, out critDamage);
-                        critProduct = (critDamage / 100f + 1) * critChance / 100;
+                        critProduct = critDamage * critChance / 100 + 1;
                         break;
                     case element:
                         Console.WriteLine("Input elemental damage multiplier.");
@@ -238,7 +254,8 @@ namespace planner
                         Console.WriteLine("Input skill damage multiplier.");
                         w = Console.ReadLine();
                         float.TryParse(w, out skill);
-                        skill = skill / 100f + 1;
+                        skill /= 100f;
+                        skill += 1;
                         break;
                     case atkSpeed:
                         Console.WriteLine("Input base weapon speed.");
@@ -266,7 +283,7 @@ namespace planner
                         allStats = !allStats;
                         break;
                     case grift:
-                        notice = "Notice: the time is estimated using the total of 40 averaged foes' health (estimated 16% margin of error).";
+                        notice = "Notice: the time is estimated using the total of " + foeCount + " averaged foes' health (with an 8% margin of error added to clear time).";
                         Console.WriteLine("Input greater rift tier between 1-150 (0 to make information hidden).");
                         if (!int.TryParse(Console.ReadLine(), out tier))
                             notice = "Invalid tier input.";
@@ -313,7 +330,12 @@ namespace planner
         }
         private static string Format(object o, string text, bool newLine = true)
         {
-            return string.Format("{0}  {1}{2}", new object[] { o, text, newLine ? "\n" : "" });
+            string i = o.ToString();
+            int length = i.Length;
+            while (length++ < 18)
+                i += " ";
+            string t = string.Format("{0} {1}{2}", new object[] { i, text, newLine ? "\n" : "" });
+            return t;
         }
     }
 }
