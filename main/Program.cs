@@ -32,9 +32,9 @@ namespace planner
             Low = 0, High = 1, Elemental = 2, SKill = 3, CritChance = 4, CritDamage = 5, BaseSpeed= 6, AttackSpeed = 7, BonusDmg = 8;
         private static double dmgProduct;
         ///<summary>
-        ///5 elites, 4 champion packs, 4 mobs
+        ///5 elites, 4 champion packs, [?]4 mobs
         ///</summary>
-        private const int foeCount = 22;
+        private const int foeCount = 17;
         static class GR
         {
             public const float 
@@ -70,7 +70,7 @@ namespace planner
                         "Off-hand:          " + offhandAvg + "\n" + 
                         "Primary stat:      " + (primaryStat * 100 - 100) + "\n" + 
                         "Crit %:            " + critChance + "\n" + 
-                        "Crit damage:       " + critDamage + "\n" + 
+                        "Crit damage %:     " + critDamage + "\n" + 
                         "Elemental %:       " + ((Math.Round(elemental, 2) - 1f) * 100f) + "\n" + 
                         "Skill damage %:    " + (skill * 100f - 100) + "\n" + 
                         "Weapon speed:      " + baseSpeed + "\n" + 
@@ -111,14 +111,8 @@ namespace planner
                 }
                 start = false;
                 input = Console.ReadLine();
-                for (int i = 0; i < values.Length; i++)
-                {
-                    if (values[i] == input)
-                        break;
-                    if (i == values.Length - 1)
-                       continue;
-                }
-                if (input == "gr")
+                bool dev = false;
+                if (input == grift && !dev)
                     continue;
                 
                 switch (input)
@@ -193,6 +187,7 @@ namespace planner
                             skill = array[4];
                             critChance = array[5];
                             critDamage = array[6];
+                            critProduct = (critDamage / 100 + 1) * (critChance / 100);
                             baseSpeed = array[7];
                             attackSpeed = array[8];
                             bonusDmg = array[9]; 
@@ -243,7 +238,7 @@ namespace planner
                         Console.WriteLine("Input crit damage.");
                         w = Console.ReadLine();
                         float.TryParse(w, out critDamage);
-                        critProduct = critDamage * critChance / 100 + 1;
+                        critProduct = (critDamage / 100 + 1) * (critChance / 100);
                         break;
                     case element:
                         Console.WriteLine("Input elemental damage multiplier.");
@@ -315,7 +310,7 @@ namespace planner
             float wep = wepAvg + offhandAvg;
             output += Format(wep, "base damage");
             float speed = baseSpeed * (attackSpeed + 1);
-            output += Format (speed, "attacks per second");
+            output += Format(speed, "attacks per second");
             double sheet = wep * speed * primaryStat * critProduct;
             output += Format(Math.Round(sheet, 2), "sheet damage");
             double product = sheet * skill;
